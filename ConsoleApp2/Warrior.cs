@@ -1,13 +1,14 @@
-﻿using WarriorWars.Enum;
+﻿using System;
+using WarriorWars.Enum;
 using WarriorWars.Equipment;
 namespace WarriorWars
 {
     class Warrior
     {
 
-        private int goodGuyStartingHealth;
-        private int badGuyStartingHealth;
-        private Faction faction;
+        private const int GOOD_GUY_STARTING_HEALTH = 20;
+        private const int BAD__GUY_STARTING_HEALTH = 20;
+        private readonly Faction FACTION;
 
         private int health;
         private string name;
@@ -27,20 +28,37 @@ namespace WarriorWars
         public Warrior(string name, Faction faction)
         {
             this.name = name;
-            this.faction = faction;
+            FACTION = faction;
             isAlive = true;
             switch (faction)
             {
                 case Faction.GoodGuy:
                     weapon = new Weapon(faction);
-                    armor = new Armor();
-                    health = goodGuyStartingHealth;
+                    armor = new Armor(faction);
+                    health = GOOD_GUY_STARTING_HEALTH;
                     break;
                 case Faction.BadGuy:
                     weapon = new Weapon(faction);
-                    armor = new Armor();
-                    health = badGuyStartingHealth;
+                    armor = new Armor(faction);
+                    health = BAD__GUY_STARTING_HEALTH;
                     break;
+            }
+        }
+
+        public void Attack(Warrior enemy)
+        {
+            int damage = weapon.Damage / enemy.armor.ArmorPoints;
+            enemy.health -= damage;
+            if(enemy.health <= 0)
+            {
+                enemy.isAlive = false;
+                Tools.ColorfulWriteLine($"{enemy.name} is dead!",ConsoleColor.Red);
+                Tools.ColorfulWriteLine($"{name} is victorious!",ConsoleColor.Green);
+            }
+            else
+            {
+                Console.WriteLine($"{name} attacked {enemy.name} {damage} was inflicted to {enemy.name}, remaining health of {enemy.name} is {enemy.health}");
+                
             }
         }
 
